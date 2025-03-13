@@ -1,29 +1,37 @@
-import toast from "react-hot-toast"; // ایمپورت کتابخانه toast برای نمایش پیام‌های خطا
+import toast from "react-hot-toast";
 
-// validate login username // تابع برای اعتبارسنجی نام کاربری هنگام ورود
+// validate login username
 export async function usernameValidate(values) {
-  const errors = usernameVerify({}, values); // اجرای تابع اعتبارسنجی و ذخیره خطاها در errors
-  return errors; // برگرداندن لیست خطاها
+  const errors = usernameVerify({}, values);
+  return errors;
+}
+// validate  password
+export async function passwordValidate(values) {
+  const errors = passwordVerify({}, values);
+  return errors;
 }
 
-// validate username // تابع برای بررسی مقدار نام کاربری
+function passwordVerify(errors = {}, values) {
+  const specialChars = /[!'@#$%^&*()_+-=\[\]{};':"\\|,.<>\/?~]/;
+
+  if (!values.password) {
+    errors.password = toast.error("Password Required...!");
+  } else if (values.password.includes(" ")) {
+    errors.password = toast.error("Wrong Password...!");
+  } else if (values.password.length < 4) {
+    errors.password = toast.error("Password must be more than 4 character");
+  } else if (!specialChars.test(values.password)) {
+    errors.password = toast.error("Password must have special character");
+  }
+  return errors;
+}
+
+// validate username //
 function usernameVerify(error = {}, values) {
   if (!values.username) {
-    // اگر مقدار نام کاربری خالی باشد
-    error.username = toast.error("Username Required ...!"); // نمایش پیام خطا
+    error.username = toast.error("Username Required ...!");
   } else if (values.username.includes(" ")) {
-    // اگر نام کاربری شامل فضای خالی باشد (این شرط اشتباه است و همیشه false خواهد بود)
-    error.username = toast.error("Invalid Username...!"); // نمایش پیام خطا برای نام کاربری نامعتبر
+    error.username = toast.error("Invalid Username...!");
   }
-  return error; // برگرداندن لیست خطاها
+  return error;
 }
-
-// ✅ ورودی:
-
-// error: یک آبجکت خالی که خطاها را در آن ذخیره می‌کنیم.
-// values: مقادیری که کاربر در فرم وارد کرده است.
-
-// ✅ خروجی:
-
-// اگر نام کاربری معتبر باشد، آبجکت خالی برمی‌گرداند.
-// اگر نام کاربری معتبر نباشد، یک پیام خطا در toast نمایش می‌دهد و خطا را در error ذخیره می‌کند.
