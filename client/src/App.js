@@ -36,13 +36,13 @@ const router = createBrowserRouter([
     element: <Reset />,
   },
   {
-    path: "/pageNotFound",
+    path: "*",
     element: <PageNotFound />,
   },
 ]);
 function App() {
   return (
-    <main className="text-3xl text-red-700">
+    <main className="text-3xl ">
       <RouterProvider router={router}></RouterProvider>
     </main>
   );
