@@ -14,8 +14,10 @@ const port = 8000;
 
 // HTTP GET REQUEST
 app.get("/", (req, res) => {
+  // res.setHeader("Content-Type", "application/json");
   res.status(201).json("Home GET Request");
 });
+
 // start server
 app.listen(port, () => {
   console.log(`Server connected to http://localhost:${port}`);
