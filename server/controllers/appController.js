@@ -1,3 +1,5 @@
+import UserModel from "../model/User.model";
+import bcrypt from "bcrypt";
 // POsT: http://localhost:8000/api/register
 // * @params:{
 //   "username": "example123",
@@ -10,7 +12,69 @@
 // "profile" : ""
 // }
 export async function register(req, res) {
-  res.json("register route");
+  try {
+    const {
+      username,
+      password,
+      email,
+      firstName,
+      lastName,
+      mobile,
+      address,
+      profile,
+    } = req.body;
+    // check the existing user
+    const existUsername = new Promise((resolve, reject) => {
+      UserModel.findOne({ username: username }, (err, user) => {
+        if (err) reject(new Error(err));
+        if (user) reject({ error: "please use unique username" });
+        resolve();
+      });
+    });
+    // check the existing user
+    const existEmail = new Promise((resolve, reject) => {
+      UserModel.findOne({ email: email }, (err, user) => {
+        if (err) reject(new Error(err));
+        if (user) reject({ error: "please use unique email" });
+        resolve();
+      });
+    });
+    Promise.all([existUsername, existEmail])
+      .then(() => {
+        if (password) {
+          bcrypt
+            .hash(password, 10)
+            .then((hashPassword) => {
+              const user = new UserModel({
+                username: username,
+                password: hashPassword,
+                profile: profile || "",
+                email,
+              });
+              // return save the result as a response
+              user
+                .save()
+                .then((result) =>
+                  res.status(201).send({ msg: "User Register Successful" })
+                )
+                .catch((error) => res.status(500).send({ error }));
+            })
+
+            .catch((error) => {
+              return res.status(500).send({
+                error: "Enable to hashed password",
+              });
+            });
+        }
+      })
+      .catch((error) => {
+        return res.status(500).send({
+          error,
+        });
+      });
+  } catch (error) {
+    return res.status(500).send(error);
+  }
 }
 
 // POsT: http://localhost:5000/api/login
