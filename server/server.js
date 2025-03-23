@@ -3,6 +3,8 @@ import cors from "cors";
 import morgan from "morgan";
 import connect from "./database/conn.js";
 import mongoose from "mongoose";
+import router from "./router/route.js";
+
 const app = express();
 
 // middlewares
@@ -18,6 +20,9 @@ app.get("/", (req, res) => {
   // res.setHeader("Content-Type", "application/json");
   res.status(201).json("Home GET Request");
 });
+
+// api routes
+app.use("/api", router);
 
 // start server only have valid connection
 
