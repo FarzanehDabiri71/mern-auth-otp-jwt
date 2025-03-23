@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-
+import connect from "./database/conn.js";
+import mongoose from "mongoose";
 const app = express();
 
 // middlewares
@@ -18,7 +19,18 @@ app.get("/", (req, res) => {
   res.status(201).json("Home GET Request");
 });
 
-// start server
-app.listen(port, () => {
-  console.log(`Server connected to http://localhost:${port}`);
-});
+// start server only have valid connection
+
+connect()
+  .then(() => {
+    try {
+      app.listen(port, () => {
+        console.log(`Server connected to http://localhost:${port}`);
+      });
+    } catch (error) {
+      console.log("connot Connect to the server");
+    }
+  })
+  .catch((error) => {
+    console.log("Invalid database conneciton...!");
+  });
